@@ -1,5 +1,13 @@
-# hltv-api
-Provides an API for HLTV
+# hltv-api-python
+Uma API em Python para pegar informações importantes do site HLTV.org
+
+
+## Motivação?
+Criar uma API fácil e simples de usar para pegar informações relevantes do HLTV, visto que o site não possui API oficial para usarmos.
+Esse código foi originalmente criado por `SocksPls/hltv-api` porém fiz algumas alterações e acrescentei algumas coisas novas a partir do código dele.
+
+## Status
+Em atualização...
 
 
 ## `top5teams`  
