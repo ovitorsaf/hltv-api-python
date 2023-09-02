@@ -203,7 +203,6 @@ def get_furia_info():
                                  "/" + str(team_info['team-name']) + "#tab-matchesBox")
     
     match_table = match_page.find("table", {"class": "table-container match-table"})
-    ## print("Tabela de jogos: ", match_table)
     ## team_info['matches'] = _get_matches_by_team(match_table)
 
     """
