@@ -11,7 +11,7 @@ Em atualização...
 
 
 ## Informações de times brasileiros
-`Exemplo: Furia`
+### Exemplo: Furia
 
 ```python
 {'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'],
@@ -34,11 +34,13 @@ import main as hltv
 print("Informações Furia")
 print(hltv.get_furia_info())
 
+
+# Resultado
 {'team-name': 'furia', 'team-id': 8297, 'next-match': [{'hora-jogo': '03/09/2023', 'campeonato': 'ESL Pro League Season 18', 'time_1': 'FURIA', 'team-1-id': 8297, 'time-2': 'GamerLegion', 'time-2-id': '9928', 'link-jogo': 'https://www.hltv.org//matches/2366081/gamerlegion-vs-furia-esl-pro-league-season-18'}], 'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'], 'historical-players': [], 'stats': {}, 'url': 'https://hltv.org/stats/team/8297/furia'}
 ```
 
 
-`Exemplo: Imperial`
+### Exemplo: Imperial
 ```python
 {'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'],
  'historical-players': [],
@@ -54,7 +56,16 @@ print(hltv.get_furia_info())
  'team-name': 'furia',
  'url': 'https://hltv.org/stats/team/8297/furia'}
 ```
+### Como usar?
+```python
+import main as hltv
 
+print("Informações Imperial")
+print(hltv.get_imperial_info())
+
+# Resultado
+{'team-name': 'imperial', 'team-id': 9455, 'next-match': [{'hora-jogo': '13/09/2023', 'campeonato': 'ESL Pro League Season 18', 'time_1': 'Imperial', 'team-1-id': 9455, 'time-2': 'fnatic', 'time-2-id': '4991', 'link-jogo': 'https://www.hltv.org//matches/2366101/imperial-vs-fnatic-esl-pro-league-season-18'}], 'current-lineup': ['HEN1', 'boltz', 'felps', 'VINI', 'JOTA'], 'historical-players': [], 'stats': {}, 'url': 'https://hltv.org/stats/team/9455/imperial'}
+```
 
 
 ## `top5teams`  
