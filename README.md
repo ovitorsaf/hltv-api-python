@@ -10,7 +10,6 @@ Esse código foi originalmente criado por `SocksPls/hltv-api` porém fiz algumas
 Em atualização...
 
 
-
 ## Informações de times brasileiros
 `Exemplo: Furia`
 
@@ -29,6 +28,15 @@ Em atualização...
  'team-name': 'furia',
  'url': 'https://hltv.org/stats/team/8297/furia'}
 ```
+### Como usar?
+```python
+import main as hltv
+print("Informações Furia")
+print(hltv.get_furia_info())
+
+{'team-name': 'furia', 'team-id': 8297, 'next-match': [{'hora-jogo': '03/09/2023', 'campeonato': 'ESL Pro League Season 18', 'time_1': 'FURIA', 'team-1-id': 8297, 'time-2': 'GamerLegion', 'time-2-id': '9928', 'link-jogo': 'https://www.hltv.org//matches/2366081/gamerlegion-vs-furia-esl-pro-league-season-18'}], 'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'], 'historical-players': [], 'stats': {}, 'url': 'https://hltv.org/stats/team/8297/furia'}
+```
+
 
 `Exemplo: Imperial`
 ```python
@@ -46,6 +54,8 @@ Em atualização...
  'team-name': 'furia',
  'url': 'https://hltv.org/stats/team/8297/furia'}
 ```
+
+
 
 ## `top5teams`  
 
