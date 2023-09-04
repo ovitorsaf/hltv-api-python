@@ -14,7 +14,24 @@ Em atualização...
 ## Informações de times brasileiros
 `Exemplo: Furia`
 
-```json
+```python
+{'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'],
+ 'historical-players': [],
+ 'next-match': [{'campeonato': 'ESL Pro League Season 18',
+                 'hora-jogo': '03/09/2023',
+                 'link-jogo': 'https://www.hltv.org//matches/2366081/gamerlegion-vs-furia-esl-pro-league-season-18',
+                 'team-1-id': 8297,
+                 'time-2': 'GamerLegion',
+                 'time-2-id': '9928',
+                 'time_1': 'FURIA'}],
+ 'stats': {},
+ 'team-id': 8297,
+ 'team-name': 'furia',
+ 'url': 'https://hltv.org/stats/team/8297/furia'}
+```
+
+`Exemplo: Imperial`
+```python
 {'current-lineup': ['FalleN', 'chelo', 'arT', 'yuurih', 'KSCERATO'],
  'historical-players': [],
  'next-match': [{'campeonato': 'ESL Pro League Season 18',
