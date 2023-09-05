@@ -6,6 +6,7 @@ from python_utils import converters
 import time
 import zoneinfo
 import tzlocal
+import json
 
 HLTV_COOKIE_TIMEZONE = "America/Sao_Paulo"
 HLTV_ZONEINFO=zoneinfo.ZoneInfo(HLTV_COOKIE_TIMEZONE)
@@ -456,8 +457,8 @@ def get_brteams_info(myteamname):
 
             page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) + "/" + teamname)
 
-            team_info['team-name'] = teamname
-            team_info['team-id'] = teamid
+            team_info["team-name"] = teamname
+            team_info["team-id"] = teamid
 
             match_page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) +
                                         "/" + str(team_info['team-name']) + "#tab-matchesBox")
@@ -468,33 +469,33 @@ def get_brteams_info(myteamname):
             next_match = {}
             
             hora_jogo = match_table.find("td", {"class": "date-cell"})("span")[0].text
-            next_match['hora-jogo'] = hora_jogo
+            next_match["hora-jogo"] = hora_jogo
             
             campeonato = match_table.find_all("a")[0].text
-            next_match['campeonato'] = campeonato
+            next_match["campeonato"] = campeonato
 
             time_1 = match_table.find_all("a")[1].text
-            next_match['time_1'] = time_1
+            next_match["time_1"] = time_1
 
             time_1_id = teamid
-            next_match['team-1-id'] = time_1_id
+            next_match["team-1-id"] = time_1_id
 
             time_2 = match_table.find_all("a")[4].text
-            next_match['time-2'] = time_2
+            next_match["time-2"] = time_2
             time_2_href = match_table.find_all("a")[4]["href"]
             pattern = r'\/(\d+)'
             if re.search(pattern, time_2_href):
                 time_2_id = re.search(pattern, time_2_href).group(1)
-                next_match['time-2-id'] = time_2_id
+                next_match["time-2-id"] = time_2_id
             else:
                 time_2_id = "0000"
-                next_match['time-2-id'] = time_2_id
+                next_match["time-2-id"] = time_2_id
 
             link_jogo = match_table.find_all("a")[5]["href"]
-            next_match['link-jogo'] = URL_BASE+link_jogo
+            next_match["link-jogo"] = URL_BASE+link_jogo
             
             n_match.append(next_match)
-            team_info['next-match'] = n_match
+            team_info["next-match"] = n_match
             
             lineup = []
             players_table = page.find("div", {"class": "bodyshot-team g-grid"})
@@ -520,10 +521,10 @@ def get_brteams_info(myteamname):
             lineup.append(player_5)
             #print("Player 5: ", player_5)
 
-            team_info['current-lineup'] = lineup
+            team_info["current-lineup"] = lineup
 
             historical_players = _get_historical_lineup(page.find_all("div", {"class": "col teammate"}))
-            team_info['historical-players'] = historical_players
+            team_info["historical-players"] = historical_players
 
             team_stats_columns = page.find_all("div", {"class": "columns"})
             team_stats = {}
@@ -536,9 +537,9 @@ def get_brteams_info(myteamname):
                     stat_title = stat.find("div", {"class": "small-label-below"}).text
                     team_stats[stat_title] = stat_value
 
-            team_info['stats'] = team_stats
+            team_info["stats"] = team_stats
 
-            team_info['url'] = "https://hltv.org/stats/team/" + str(teamid) + "/" + str(team_info['team-name'])
+            team_info["url"] = "https://hltv.org/stats/team/" + str(teamid) + "/" + str(team_info['team-name'])
 
             count += 1
             myteamname_dict[teamname] = team_info
@@ -847,7 +848,8 @@ if __name__ == "__main__":
     #pp.pprint(get_imperial_info())
 
     pp.pprint('INFOS TIMES BR')
-    pp.pprint(get_brteams_info(['teste', 'pain', 'furia']))
+    pp.pprint(get_brteams_info(["teste", "pain", "furia"]))
+    
 
     """
     pp.pprint('get_team_info')
