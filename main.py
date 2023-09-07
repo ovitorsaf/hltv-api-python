@@ -6,15 +6,16 @@ from python_utils import converters
 import time
 import zoneinfo
 import tzlocal
-import json
 
 HLTV_COOKIE_TIMEZONE = "America/Sao_Paulo"
-HLTV_ZONEINFO=zoneinfo.ZoneInfo(HLTV_COOKIE_TIMEZONE)
+HLTV_ZONEINFO = zoneinfo.ZoneInfo(HLTV_COOKIE_TIMEZONE)
 LOCAL_TIMEZONE_NAME = tzlocal.get_localzone_name()
 LOCAL_ZONEINFO = zoneinfo.ZoneInfo(LOCAL_TIMEZONE_NAME)
 URL_BASE = "https://www.hltv.org/"
-
 TEAM_MAP_FOR_RESULTS = []
+
+PADRAO_HORA_MINUTO = r'^([01]\d|2[0-3]):([0-5]\d)$'
+
 def _get_all_teams():
     if not TEAM_MAP_FOR_RESULTS:
         print("dentro do IF NOT")
@@ -83,7 +84,6 @@ def top5teams():
         teams.append(team)
     return teams
 
-
 def top30teams():
     page = get_parsed_page("https://www.hltv.org/ranking/teams/")
     teams = page.find("div", {"class": "ranking"})
@@ -105,7 +105,6 @@ def top30teams():
         teamlist.append(newteam)
     return teamlist
 
-
 def top_players():
     page = get_parsed_page("https://www.hltv.org/stats")
     players = page.find_all("div", {"class": "col"})[0]
@@ -122,7 +121,6 @@ def top_players():
         playerObj['id'] = converters.to_int(player.find('a', {'class': 'name'}).get('href').split("/")[-2])
         playersArray.append(playerObj)
     return playersArray
-
 
 def get_players(teamid):
     page = get_parsed_page("https://www.hltv.org/?pageid=362&teamid=" + str(teamid))
@@ -186,247 +184,6 @@ def get_team_info(teamid):
 
     return team_info
 
-
-### PEGA AS INFOS DA FÚRIA
-
-def get_furia_info():
-
-    teamid = 8297
-    teamname = "furia"
-
-    page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) + "/" + teamname)
-
-    team_info = {}
-    team_info['team-name'] = teamname
-    team_info['team-id'] = teamid
-
-    match_page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) +
-                                 "/" + str(team_info['team-name']) + "#tab-matchesBox")
-    
-    match_table = match_page.find("table", {"class": "table-container match-table"})
-    ## team_info['matches'] = _get_matches_by_team(match_table)
-
-    """
-    IMPLEMENTANDO NOVO MATCH
-    """
-
-    #print("TBODY: ", match_table.find_all("tbody"))
-    #tbody = match_table.find_all("tbody")
-    
-    n_match = []
-    next_match = {}
-    
-    hora_jogo = match_table.find("td", {"class": "date-cell"})("span")[0].text
-    next_match['hora-jogo'] = hora_jogo
-    
-    campeonato = match_table.find_all("a")[0].text
-    next_match['campeonato'] = campeonato
-
-    time_1 = match_table.find_all("a")[1].text
-    next_match['time_1'] = time_1
-
-    time_1_id = teamid
-    next_match['team-1-id'] = time_1_id
-
-    time_2 = match_table.find_all("a")[4].text
-    next_match['time-2'] = time_2
-    time_2_href = match_table.find_all("a")[4]["href"]
-    pattern = r'\/(\d+)'
-    if re.search(pattern, time_2_href):
-        time_2_id = re.search(pattern, time_2_href).group(1)
-        next_match['time-2-id'] = time_2_id
-    else:
-        time_2_id = "0000"
-        next_match['time-2-id'] = time_2_id
-
-    link_jogo = match_table.find_all("a")[5]["href"]
-    next_match['link-jogo'] = URL_BASE+link_jogo
-    
-    n_match.append(next_match)
-    team_info['next-match'] = n_match
-
-    """
-    """
-
-    '''
-    IMPLEMENTANDO NOVA CURRENT_LINEUP
-    '''
-    lineup = []
-    players_table = page.find("div", {"class": "bodyshot-team g-grid"})
-    #print("Players Section: ", players_section)
-
-    player_1 = players_table.find_all("a")[0]("span")[1].text
-    lineup.append(player_1)
-    #print("Player 1: ", player_1)
-
-    player_2 = players_table.find_all("a")[1]("span")[1].text
-    lineup.append(player_2)
-    #print("Player 2: ", player_2)
-
-    player_3 = players_table.find_all("a")[2]("span")[1].text
-    lineup.append(player_3)
-    #print("Player 3: ", player_3)
-
-    player_4 = players_table.find_all("a")[3]("span")[1].text
-    lineup.append(player_4)
-    #print("Player 4: ", player_4)
-
-    player_5 = players_table.find_all("a")[4]("span")[1].text
-    lineup.append(player_5)
-    #print("Player 5: ", player_5)
-
-    team_info['current-lineup'] = lineup
-
-    #current_lineup = _get_current_lineup(page.find_all("div", {"class": "bodyshot-team g-grid"}))
-    #team_info['current-lineup'] = current_lineup
-
-    '''
-    '''
-
-    
-    historical_players = _get_historical_lineup(page.find_all("div", {"class": "col teammate"}))
-    team_info['historical-players'] = historical_players
-
-    team_stats_columns = page.find_all("div", {"class": "columns"})
-    team_stats = {}
-
-    for columns in team_stats_columns:
-        stats = columns.find_all("div", {"class": "col standard-box big-padding"})
-
-        for stat in stats:
-            stat_value = stat.find("div", {"class": "large-strong"}).text
-            stat_title = stat.find("div", {"class": "small-label-below"}).text
-            team_stats[stat_title] = stat_value
-
-    team_info['stats'] = team_stats
-
-    team_info['url'] = "https://hltv.org/stats/team/" + str(teamid) + "/" + str(team_info['team-name'])
-
-    return team_info
-
-### FIM DE PEGAR AS INFOS DA FURIA
-
-
-###  PEGA AS INFOS DA IMPERIAL
-def get_imperial_info():
-
-    teamid = 9455
-    teamname = "imperial"
-
-    page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) + "/" + teamname)
-
-    team_info = {}
-    team_info['team-name'] = teamname
-    team_info['team-id'] = teamid
-
-    match_page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) +
-                                 "/" + str(team_info['team-name']) + "#tab-matchesBox")
-    
-    match_table = match_page.find("table", {"class": "table-container match-table"})
-    ## print("Tabela de jogos: ", match_table)
-    ## team_info['matches'] = _get_matches_by_team(match_table)
-
-    """
-    IMPLEMENTANDO NOVO MATCH
-    """
-
-    #print("TBODY: ", match_table.find_all("tbody"))
-    #tbody = match_table.find_all("tbody")
-    
-    n_match = []
-    next_match = {}
-    
-    hora_jogo = match_table.find("td", {"class": "date-cell"})("span")[0].text
-    next_match['hora-jogo'] = hora_jogo
-    
-    campeonato = match_table.find_all("a")[0].text
-    next_match['campeonato'] = campeonato
-
-    time_1 = match_table.find_all("a")[1].text
-    next_match['time_1'] = time_1
-
-    time_1_id = teamid
-    next_match['team-1-id'] = time_1_id
-
-    time_2 = match_table.find_all("a")[4].text
-    next_match['time-2'] = time_2
-    time_2_href = match_table.find_all("a")[4]["href"]
-    pattern = r'\/(\d+)'
-    if re.search(pattern, time_2_href):
-        time_2_id = re.search(pattern, time_2_href).group(1)
-        next_match['time-2-id'] = time_2_id
-    else:
-        time_2_id = "0000"
-        next_match['time-2-id'] = time_2_id
-
-    link_jogo = match_table.find_all("a")[5]["href"]
-    next_match['link-jogo'] = URL_BASE+link_jogo
-    
-    n_match.append(next_match)
-    team_info['next-match'] = n_match
-
-    """
-    """
-
-    '''
-    IMPLEMENTANDO NOVA CURRENT_LINEUP
-    '''
-    
-    lineup = []
-    players_table = page.find("div", {"class": "bodyshot-team g-grid"})
-    #print("Players Section: ", players_section)
-
-    player_1 = players_table.find_all("a")[0]("span")[1].text
-    lineup.append(player_1)
-    #print("Player 1: ", player_1)
-
-    player_2 = players_table.find_all("a")[1]("span")[1].text
-    lineup.append(player_2)
-    #print("Player 2: ", player_2)
-
-    player_3 = players_table.find_all("a")[2]("span")[1].text
-    lineup.append(player_3)
-    #print("Player 3: ", player_3)
-
-    player_4 = players_table.find_all("a")[3]("span")[1].text
-    lineup.append(player_4)
-    #print("Player 4: ", player_4)
-
-    player_5 = players_table.find_all("a")[4]("span")[1].text
-    lineup.append(player_5)
-    #print("Player 5: ", player_5)
-
-    team_info['current-lineup'] = lineup
-
-    #current_lineup = _get_current_lineup(page.find_all("div", {"class": "bodyshot-team g-grid"}))
-    #team_info['current-lineup'] = current_lineup
-
-    '''
-    '''
-
-    historical_players = _get_historical_lineup(page.find_all("div", {"class": "col teammate"}))
-    team_info['historical-players'] = historical_players
-
-    team_stats_columns = page.find_all("div", {"class": "columns"})
-    team_stats = {}
-
-    for columns in team_stats_columns:
-        stats = columns.find_all("div", {"class": "col standard-box big-padding"})
-
-        for stat in stats:
-            stat_value = stat.find("div", {"class": "large-strong"}).text
-            stat_title = stat.find("div", {"class": "small-label-below"}).text
-            team_stats[stat_title] = stat_value
-
-    team_info['stats'] = team_stats
-
-    team_info['url'] = "https://hltv.org/stats/team/" + str(teamid) + "/" + str(team_info['team-name'])
-
-    return team_info
-
-### FIM DE PEGAR AS INFOS DA IMPERIAL
-
-
 ### Pegar infos de times brasileiros por vetor
 def get_brteams_info(myteamname):
 
@@ -466,36 +223,50 @@ def get_brteams_info(myteamname):
             match_table = match_page.find("table", {"class": "table-container match-table"})
             
             n_match = []
-            next_match = {}
+            nearest_match = {}
             
-            hora_jogo = match_table.find("td", {"class": "date-cell"})("span")[0].text
-            next_match["hora-jogo"] = hora_jogo
+            hora_data_jogo = match_table.find("td", {"class": "date-cell"})("span")[0].text
+            
+
+            if re.match(PADRAO_HORA_MINUTO, hora_data_jogo):
+                hora_jogo_global = int(hora_data_jogo.split(":")[0])
+                print("hora jogo, ", hora_jogo_global)
+                minutos_jogo_global = str(hora_data_jogo.split(":")[1])
+                print("minutos jogo, ", minutos_jogo_global)
+                
+                hora_jogo_br = str(hora_jogo_global - 5)
+                hora_data_jogo_br = hora_jogo_br + ":" + minutos_jogo_global
+                print("HORA JOGO BR: ", hora_data_jogo_br)
+
+                nearest_match["hora-data-jogo"] = hora_data_jogo_br
+            else:
+                nearest_match["hora-data-jogo"] = hora_data_jogo
             
             campeonato = match_table.find_all("a")[0].text
-            next_match["campeonato"] = campeonato
+            nearest_match["campeonato"] = campeonato
 
             time_1 = match_table.find_all("a")[1].text
-            next_match["time_1"] = time_1
+            nearest_match["time_1"] = time_1
 
             time_1_id = teamid
-            next_match["team-1-id"] = time_1_id
+            nearest_match["team-1-id"] = time_1_id
 
             time_2 = match_table.find_all("a")[4].text
-            next_match["time-2"] = time_2
+            nearest_match["time-2"] = time_2
             time_2_href = match_table.find_all("a")[4]["href"]
             pattern = r'\/(\d+)'
             if re.search(pattern, time_2_href):
                 time_2_id = re.search(pattern, time_2_href).group(1)
-                next_match["time-2-id"] = time_2_id
+                nearest_match["time-2-id"] = time_2_id
             else:
                 time_2_id = "0000"
-                next_match["time-2-id"] = time_2_id
+                nearest_match["time-2-id"] = time_2_id
 
             link_jogo = match_table.find_all("a")[5]["href"]
-            next_match["link-jogo"] = URL_BASE+link_jogo
+            nearest_match["link-jogo"] = URL_BASE+link_jogo
             
-            n_match.append(next_match)
-            team_info["next-match"] = n_match
+            n_match.append(nearest_match)
+            team_info["nearest-match"] = n_match
             
             lineup = []
             players_table = page.find("div", {"class": "bodyshot-team g-grid"})
@@ -841,16 +612,9 @@ if __name__ == "__main__":
     pp.pprint(top5teams())
     """
 
-    #pp.pprint('INFOS FURIA')
-    #pp.pprint(get_furia_info())
-
-    #pp.pprint('INFOS IMPERIAL')
-    #pp.pprint(get_imperial_info())
-
     pp.pprint('INFOS TIMES BR')
-    pp.pprint(get_brteams_info(["teste", "pain", "furia"]))
+    pp.pprint(get_brteams_info(["mibr", "imperial"]))
     
-
     """
     pp.pprint('get_team_info')
     pp.pprint(get_team_info('8297'))
