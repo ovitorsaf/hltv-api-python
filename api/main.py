@@ -214,6 +214,7 @@ def get_brteams_info(myteamname):
 
             page = get_parsed_page("https://www.hltv.org/team/" + str(teamid) + "/" + teamname)
 
+    
             team_info["team-name"] = teamname
             team_info["team-id"] = teamid
 
@@ -221,7 +222,7 @@ def get_brteams_info(myteamname):
                                         "/" + str(team_info['team-name']) + "#tab-matchesBox")
             
             match_table = match_page.find("table", {"class": "table-container match-table"})
-            
+
             n_match = []
             nearest_match = {}
             

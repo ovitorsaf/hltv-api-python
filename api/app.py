@@ -1,9 +1,12 @@
-from flask import Flask, jsonify
-import main as hltv
-import pprint 
+from flask import Flask, render_template, jsonify
+import api.main as hltv
 
 app = Flask(__name__)
 path = "./data/data.json"
+
+@app.route('/')
+def index():
+    return render_template('./public/index.html')
 
 @app.route('/update_brteams_data')
 def update_data():
@@ -26,11 +29,10 @@ def update_data():
     
     return "Dados Atualizados"
 
-@app.route('/get_data')
+@app.route('/get_data', methods=["GET"])
 def get_data():
     with open(path, 'r') as arquivo:
         dados = arquivo.read()
-
     return dados
 
 if __name__ == '__main__':
